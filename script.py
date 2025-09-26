@@ -101,7 +101,7 @@ def generateShapes():
         <coordinates>
         """
         # we get the points for the star here
-        randTurn = np.random.random() * 90
+        randTurn = np.random.random() * 360
         while (i < 11):
             d = geopy.distance.geodesic(kilometers = (j * (kmWidePerStar / 4)))
             sPoint = d.destination(point=start, bearing=(randTurn + (i * 36)))
