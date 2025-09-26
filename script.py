@@ -24,14 +24,14 @@ def getCoordsInUS():
     url = "cb_2018_us_nation_20m.zip"
     us = gpd.read_file(url).explode()
     ## filter out parts of the US that east of PR (no guam etc)
-    us = us.loc[us.geometry.apply(lambda x: x.exterior.bounds[2])<-60]
+    #us = us.loc[us.geometry.apply(lambda x: x.exterior.bounds[2])<-60]
 
     # grab bounding box within which to generate random numbers
     x_min,y_min,x_max,y_max = us.geometry.union_all().bounds
     #print(x_min, y_min, x_max, y_max)
 
     # the sampling
-    N = (totalStars * 8) # enough points to reliably meet the desired number
+    N = (totalStars * 22) # enough points to reliably meet the desired number
     rndn_sample = pd.DataFrame({'x':np.random.uniform(x_min,x_max,N),'y':generateLats(y_min,y_max,N)}) # actual generation
     # re-save results in a geodataframe
     rndn_sample = gpd.GeoDataFrame(rndn_sample, geometry = gpd.points_from_xy(x=rndn_sample.x, y=rndn_sample.y),crs = us.crs)
