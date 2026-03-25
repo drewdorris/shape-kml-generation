@@ -26,7 +26,9 @@ print(dataset.GetRasterBand(1).GetMetadata())
 # total locs to generate
 totalStars = 100
 
-kmWide = 75.56
+kmWide = 0.86
+kmWide = kmWide * .75
+genPoints = True
 
 # total pop
 # 321392026 old number
@@ -122,6 +124,11 @@ kml = """<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
 """
+pointsKml = """<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+<name>Pins</name><Style id="icon-1899-F9A825-nodesc-normal"><IconStyle><color>ff25a8f9</color><scale>1</scale><Icon><href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href></Icon><hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/></IconStyle><LabelStyle><scale>0</scale></LabelStyle><BalloonStyle><text><![CDATA[<h3>$[name]</h3>]]></text></BalloonStyle></Style><Style id="icon-1899-F9A825-nodesc-highlight"><IconStyle><color>ff25a8f9</color><scale>1</scale><Icon><href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href></Icon><hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/></IconStyle><LabelStyle><scale>1</scale></LabelStyle><BalloonStyle><text><![CDATA[<h3>$[name]</h3>]]></text></BalloonStyle></Style><StyleMap id="icon-1899-F9A825-nodesc"><Pair><key>normal</key><styleUrl>#icon-1899-F9A825-nodesc-normal</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#icon-1899-F9A825-nodesc-highlight</styleUrl></Pair></StyleMap>
+"""
 
 def generateShapes():
     x = 0
@@ -145,6 +152,13 @@ def generateShapes():
         kml = kml + "<Placemark><name>Star " + str(x + 1) + """</name><Style><IconStyle><Icon/></IconStyle><LineStyle><color>ff0000ff</color><width>1</width></LineStyle></Style><LineString><tessellate>1</tessellate>
         <coordinates>
         """
+
+        global pointsKml
+        pointsKml = pointsKml + """<Placemark><name>Star """ + str(x + 1) + """</name><styleUrl>#icon-1899-F9A825-nodesc</styleUrl><Point>
+        <coordinates>"""
+        pointsKml = pointsKml + str(start.longitude) + ',' + str(start.latitude) + ",0.0"
+        pointsKml = pointsKml + "</coordinates></Point></Placemark>"
+        
         # we get the points for the star here
         randTurn = np.random.random() * 360
         while (i < 11):
@@ -173,8 +187,15 @@ print("Shapes generated");
 kml = kml + """
 </Document>
 </kml>"""
+pointsKml = pointsKml + """</Document>
+</kml>"""
 
 filename = "output/" + datetime.now().strftime('%Y%m%d_%H%M%S') + "_" + str(totalStars) + "s_" + str(kmWide).replace(".", "-") + "km.kml"
 
 with open(filename, "a") as f:
     f.write(kml);
+
+if (genPoints):
+    filename = "output/" + datetime.now().strftime('%Y%m%d_%H%M%S') + "_" + str(totalStars) + "s_" + str(kmWide).replace(".", "-") + "km_points.kml"
+    with open(filename, "a") as f:
+        f.write(pointsKml);
