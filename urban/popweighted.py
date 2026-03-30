@@ -20,8 +20,8 @@ import math
 gdal.UseExceptions()
 dataset = gdal.Open("usa_ppp_2020_constrained.tif", gdal.GA_ReadOnly)
 (upper_left_x, x_size, x_rotation, upper_left_y, y_rotation, y_size) = dataset.GetGeoTransform()
-print(dataset.GetRasterBand(1).GetStatistics(True, True))
-print(dataset.GetRasterBand(1).GetMetadata())
+#print(dataset.GetRasterBand(1).GetStatistics(True, True))
+#print(dataset.GetRasterBand(1).GetMetadata())
 
 # total locs to generate
 totalStars = 100
@@ -47,6 +47,14 @@ resultX = [0] * totalStars
 resultY = [0] * totalStars
 densityValues = [0] * totalStars
 
+# print initial info
+print("--- Settings ---")
+print("Total stars:", totalStars)
+print("Star width maximum:", kmWide)
+print("Generate pins on stars:", genPoints)
+print("--- Settings ---")
+print();
+
 i = 0
 runningTotal = 0
 find = 3150000000
@@ -56,14 +64,11 @@ while (i < 62976):
     if (i == 62000):
         j = 976
     data = dataset.GetRasterBand(1).ReadAsArray(0, i, 430711, j)
-    #masked_data = np.ma.masked_equal(data, dataset.GetRasterBand(1).GetNoDataValue())
-    #valid_data = masked_data.compressed();
     (y_index, x_index) = np.nonzero(data > 0)
 
     k = 0
     l = 0
     imax = len(data[(y_index, x_index)])
-    #while (i < imax):
     for (y, x) in zip(*(y_index, x_index)):
         value = data[y, x]
         #print(value)
@@ -98,15 +103,7 @@ while (i < 62976):
             randLoop += 1
                 
     #print("Total:", runningTotal)
-    print(runningTotal)
-    #while (k < 430711):
-    #    while (l < j):
-    #        if (masked_data[l, k] != 0):
-    #            print(masked_data[l, k])
-    #        l += 1
-    #    k += 1
-    #print(total)
-    #print(i)
+    print("Total pop checked so far:", f"{runningTotal:.0f}", "/", totalPopulation)
     i += 1000
 
 rrr = 0

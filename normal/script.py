@@ -22,13 +22,21 @@ pointsKml = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 totalStars = 100
-kmWide = 1.03
-genPoints = True
+kmWide = 200
+genPoints = False
 
 def getCoordsInUS():
+    # print initial info
+    print("--- Settings ---")
+    print("Total stars:", totalStars)
+    print("Star width:", kmWide)
+    print("Generate pins on stars:", genPoints)
+    print("--- Settings ---")
+    print();
     # grab shape within which to sample
     url = "cb_2018_us_nation_20m.zip"
     us = gpd.read_file(url).explode()
+    print(url, "loaded")
     ## filter out parts of the US that east of PR (no guam etc)
     #us = us.loc[us.geometry.apply(lambda x: x.exterior.bounds[2])<-60]
 
@@ -41,7 +49,7 @@ def getCoordsInUS():
     rndn_sample = pd.DataFrame({'x':np.random.uniform(x_min,x_max,N),'y':generateLats(y_min,y_max,N)}) # actual generation
     # re-save results in a geodataframe
     rndn_sample = gpd.GeoDataFrame(rndn_sample, geometry = gpd.points_from_xy(x=rndn_sample.x, y=rndn_sample.y),crs = us.crs)
-
+    print('Generating coords...')
     # filtering
     inUS = rndn_sample['geometry'].apply(lambda s: s.within(us.geometry.union_all())) # check if within the U.S. bounds
     global points
